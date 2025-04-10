@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const [context, setContext] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tokenCount, setTokenCount] = useState(0);
-  const [maxTokens, setMaxTokens] = useState(100);
+  const [maxTokens, setMaxTokens] = useState(200);
   const { isDark, setIsDark } = useDarkMode();
 
   // Reset chat context when app mounts
@@ -70,7 +70,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="h-screen bg-gray-100 dark:bg-gray-800">
       <div className="h-full mx-auto max-w-7xl">
         <div className="h-full flex flex-col">
           <header className="flex-none p-4 border-b dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-900">

@@ -4,7 +4,7 @@ import { config } from './config';
 
 // Initialize OpenAI client
 const openai = new OpenAI();
-let MAX_TOKENS = 100;
+let MAX_TOKENS = config.openai.defaultContextTokens;
 
 /**
  * Message interface representing a chat message
@@ -26,8 +26,7 @@ class ChatManager {
   };
 
   reset() {
-    // Just reset max tokens, context is managed by client
-    MAX_TOKENS = 100;
+    MAX_TOKENS = config.openai.defaultContextTokens;
   }
 
   setMaxTokens(newMax: number) {
@@ -72,17 +71,7 @@ class ChatManager {
     const newMessage: Message = { role: 'user', content: userMessage };
     let context: Message[] = [...clientContext, newMessage];
 
-    // Count tokens and trim if needed BEFORE sending to OpenAI
-    let tokenCount = this.countTokens([this.systemMessage, ...context]);
-
-    // If over token limit, remove oldest user-assistant pairs until under limit
-    while (tokenCount > MAX_TOKENS && context.length >= 2) {
-      // Remove oldest user-assistant pair
-      context.splice(0, 2);
-      tokenCount = this.countTokens([this.systemMessage, ...context]);
-    }
-
-    // Add system message before sending to OpenAI
+    // Send full context to OpenAI including system message
     const fullContext = [this.systemMessage, ...context];
 
     // Get OpenAI response
@@ -98,6 +87,16 @@ class ChatManager {
 
     // Add assistant's response to context
     context = [...context, assistantMessage];
+
+    // NOW check tokens and trim if needed
+    let tokenCount = this.countTokens([this.systemMessage, ...context]);
+
+    // If over token limit, remove oldest user-assistant pairs until under limit
+    while (tokenCount > MAX_TOKENS && context.length >= 2) {
+      // Remove oldest user-assistant pair
+      context.splice(0, 2);
+      tokenCount = this.countTokens([this.systemMessage, ...context]);
+    }
 
     return {
       message: assistantMessage,

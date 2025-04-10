@@ -26,20 +26,16 @@ export const MessageList: React.FC<MessageListProps> = ({
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`
-              flex flex-col
-              ${message.role === 'assistant' ? 'items-start' : 'items-end'}
-            `}
+            className={`flex ${
+              message.role === 'assistant' ? 'justify-start' : 'justify-end'
+            } mb-4`}
           >
             <div
-              className={`
-                max-w-[80%] rounded-lg px-4 py-2
-                ${
-                  message.role === 'assistant'
-                    ? 'bg-gray-200 dark:bg-gray-800'
-                    : 'bg-blue-500 text-white'
-                }
-              `}
+              className={`max-w-[80%] rounded-lg p-4 whitespace-pre-wrap ${
+                message.role === 'assistant'
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                  : 'bg-blue-500 text-white'
+              }`}
             >
               {message.content}
             </div>
@@ -47,8 +43,21 @@ export const MessageList: React.FC<MessageListProps> = ({
         ))}
         {isLoading && (
           <div className="flex items-start">
-            <div className="bg-gray-200 dark:bg-gray-800 rounded-lg px-4 py-2">
-              <div className="animate-pulse">Thinking...</div>
+            <div className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-4 py-2">
+              <div className="flex space-x-1 px-2 pt-2 pb-1">
+                <div
+                  className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                  style={{ animationDelay: '0ms' }}
+                />
+                <div
+                  className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                  style={{ animationDelay: '150ms' }}
+                />
+                <div
+                  className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                  style={{ animationDelay: '300ms' }}
+                />
+              </div>
             </div>
           </div>
         )}

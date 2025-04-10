@@ -13,6 +13,7 @@ export const config = {
   openai: {
     model: 'gpt-4',
     maxTokens: 700, // Maximum tokens to keep in conversation context
+    defaultContextTokens: 200, // Default token limit for conversation context
   },
   rateLimit: rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
