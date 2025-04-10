@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-export function useDarkMode() {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+export const useDarkMode = () => {
+  const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
     }
@@ -9,16 +9,14 @@ export function useDarkMode() {
   });
 
   useEffect(() => {
-    if (isDarkMode) {
+    if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [isDarkMode]);
+  }, [isDark]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleDark = () => setIsDark(!isDark);
 
-  return { isDarkMode, toggleDarkMode };
-}
+  return { isDark, toggleDark };
+};
