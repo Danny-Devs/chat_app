@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageList } from './components/MessageList';
 import { MessageInput } from './components/MessageInput';
 import { DebugPanel } from './components/DebugPanel';
+import { TokenDisplay } from './components/TokenDisplay';
 import { sendMessage, resetChat } from './api';
 import type { Message } from './types';
 import { useDarkMode } from './hooks/useDarkMode';
@@ -14,6 +15,7 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tokenCount, setTokenCount] = useState(0);
+  const [maxTokens, setMaxTokens] = useState(100);
   const [context, setContext] = useState<Message[]>([]);
   const { isDark, setIsDark } = useDarkMode();
 
@@ -25,6 +27,28 @@ const App: React.FC = () => {
     setTokenCount(0);
   }, []);
 
+  const handleMaxTokensChange = async (newMax: number) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/chat/max-tokens`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ maxTokens: Number(newMax) }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setMaxTokens(Number(data.maxTokens));
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to update max tokens:', errorText);
+      }
+    } catch (error) {
+      console.error('Failed to update max tokens:', error);
+    }
+  };
+
   // Handle new message submission
   const handleSubmit = async (message: string) => {
     if (!message.trim()) return;
@@ -35,7 +59,6 @@ const App: React.FC = () => {
 
     try {
       const response = await sendMessage(message);
-      console.log('Response from server:', response); // Debug log
       setMessages((prev) => [...prev, response.message]);
       setTokenCount(response.tokenCount);
       setContext(response.context);
@@ -71,18 +94,11 @@ const App: React.FC = () => {
               <div className="flex-1 min-h-0">
                 <MessageList messages={messages} isLoading={isLoading} />
               </div>
-              <div className="flex-none text-sm text-gray-500 dark:text-gray-400 px-4 py-2 border-t dark:border-gray-700 flex items-center">
-                <div className="group relative flex items-center">
-                  <span className="mr-1">
-                    <InfoIcon />
-                  </span>
-                  <span className="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-60 bg-gray-800 text-white text-xs rounded p-2">
-                    Token count estimated using 'tiktoken' - may differ from
-                    official OpenAI API count
-                  </span>
-                </div>
-                Token count: {tokenCount}
-              </div>
+              <TokenDisplay
+                currentTokens={tokenCount}
+                maxTokens={maxTokens}
+                onMaxTokensChange={handleMaxTokensChange}
+              />
               <MessageInput onSubmit={handleSubmit} isLoading={isLoading} />
             </div>
 

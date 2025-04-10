@@ -18,6 +18,16 @@ app.post('/api/chat/reset', (req, res) => {
 });
 
 // API Routes
+app.post('/api/chat/max-tokens', (req, res) => {
+  const maxTokens = parseInt(req.body.maxTokens, 10);
+  if (isNaN(maxTokens) || maxTokens <= 0) {
+    return res.status(400).json({ error: 'Invalid max tokens value' });
+  }
+  chatManager.setMaxTokens(maxTokens);
+  const newMax = chatManager.getMaxTokens();
+  res.json({ maxTokens: newMax });
+});
+
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
@@ -29,9 +39,6 @@ app.post('/api/chat', async (req, res) => {
 
     // Process message and return response
     const result = await chatManager.processMessage(message);
-    console.log('Server sending result:', result); // Debug log
-    console.log('Context array exists:', Array.isArray(result.context)); // Debug log
-    console.log('Context length:', result.context?.length); // Debug log
     res.json(result);
   } catch (error) {
     console.error('Chat error:', error);
