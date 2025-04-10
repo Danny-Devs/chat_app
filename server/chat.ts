@@ -2,7 +2,7 @@ import { OpenAI } from 'openai';
 import { encoding_for_model } from 'tiktoken';
 import { config } from './config';
 
-// Initialize OpenAI client and tokenizer
+// Initialize OpenAI client
 const openai = new OpenAI();
 const MAX_TOKENS = 100;
 
@@ -20,7 +20,7 @@ export interface Message {
  * Manages conversation context and token limits
  */
 class ChatManager {
-  // Initialize with system message
+  // Initialize context with system message
   private context: Message[] = [
     {
       role: 'system',
@@ -38,7 +38,7 @@ class ChatManager {
     // Add user message to context
     this.context.push({ role: 'user', content: userMessage });
 
-    // Get assistant response
+    // Get OpenAI response
     const response = await openai.chat.completions.create({
       model: config.openai.model,
       messages: this.context,
@@ -47,16 +47,14 @@ class ChatManager {
     const assistantMessage = response.choices[0].message as Message;
     this.context.push(assistantMessage);
 
-    // Create new encoder each time like in basic_chat
+    // Count tokens in entire context
     let tokenCount = encoding_for_model('gpt-4o').encode(
       this.context.map((m) => m.content).join('\n')
     ).length;
 
-    // Trim old message pairs while context is too big
+    // Remove oldest message pairs if context is too large
     while (tokenCount > MAX_TOKENS) {
-      // Remove oldest user+assistant pair, keeping system message
-      this.context.splice(1, 2);
-      // Recount tokens after trimming
+      this.context.splice(1, 2); // Keep system message, remove user+assistant pair
       tokenCount = encoding_for_model('gpt-4o').encode(
         this.context.map((m) => m.content).join('\n')
       ).length;

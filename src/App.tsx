@@ -8,11 +8,13 @@ import { SunIcon } from './components/icons/SunIcon';
 import { MoonIcon } from './components/icons/MoonIcon';
 
 const App: React.FC = () => {
+  // App state
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tokenCount, setTokenCount] = useState(0);
   const { isDark, setIsDark } = useDarkMode();
 
+  // Handle new message submission
   const handleSubmit = async (message: string) => {
     if (!message.trim()) return;
     setIsLoading(true);

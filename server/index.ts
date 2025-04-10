@@ -25,7 +25,7 @@ app.post('/api/chat', async (req, res) => {
     const result = await chatManager.processMessage(message);
     res.json(result);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Chat error:', error);
     res.status(500).json({ error: 'Error processing request' });
   }
 });
