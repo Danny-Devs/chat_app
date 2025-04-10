@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import type { Message } from '../types';
 
 interface MessageListProps {
@@ -10,6 +10,16 @@ export const MessageList: React.FC<MessageListProps> = ({
   messages,
   isLoading,
 }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-4 space-y-4">
@@ -42,6 +52,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );
