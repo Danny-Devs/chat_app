@@ -23,7 +23,7 @@ const App: React.FC = () => {
     try {
       const response = await sendMessage(message);
       setMessages((prev) => [...prev, response.message]);
-      setTokenCount((prev) => prev + response.tokenCount);
+      setTokenCount(response.tokenCount);
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
