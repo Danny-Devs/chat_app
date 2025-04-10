@@ -8,6 +8,7 @@ import type { Message } from './types';
 import { useDarkMode } from './hooks/useDarkMode';
 import { SunIcon } from './components/icons/SunIcon';
 import { MoonIcon } from './components/icons/MoonIcon';
+import { ChatLogo } from './components/icons/ChatLogo';
 import { InfoIcon } from './components/icons/InfoIcon';
 
 const App: React.FC = () => {
@@ -74,9 +75,12 @@ const App: React.FC = () => {
       <div className="h-full mx-auto max-w-7xl">
         <div className="h-full flex flex-col">
           <header className="flex-none p-4 border-b dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-900">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Chat App
-            </h1>
+            <div className="flex items-center gap-2">
+              <ChatLogo />
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Chat App
+              </h1>
+            </div>
             <button
               onClick={() => setIsDark(!isDark)}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
