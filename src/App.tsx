@@ -81,13 +81,38 @@ const App: React.FC = () => {
                 Chat App
               </h1>
             </div>
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-              aria-label="Toggle dark mode"
-            >
-              {isDark ? <MoonIcon /> : <SunIcon />}
-            </button>
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <button
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                  aria-label="About"
+                >
+                  <InfoIcon />
+                </button>
+                <div className="absolute right-0 w-72 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  <p className="mb-2">
+                    This chat app uses tiktoken to estimate token counts for
+                    OpenAI API interactions.
+                  </p>
+                  <p className="mb-2">
+                    For each user prompt, we send the conversation history to
+                    maintain context, but we intelligently prune older messages
+                    when the total token count exceeds the limit.
+                  </p>
+                  <p>
+                    This helps optimize API costs while preserving meaningful
+                    conversation context.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDark(!isDark)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                aria-label="Toggle dark mode"
+              >
+                {isDark ? <MoonIcon /> : <SunIcon />}
+              </button>
+            </div>
           </header>
 
           <div className="flex-1 flex min-h-0 bg-white dark:bg-gray-900">
