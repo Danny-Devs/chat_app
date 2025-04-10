@@ -35,41 +35,27 @@ class ChatManager {
   async processMessage(
     userMessage: string
   ): Promise<{ message: Message; tokenCount: number }> {
-    // Add user message to context
     this.context.push({ role: 'user', content: userMessage });
 
-    // Get response from OpenAI
     const response = await openai.chat.completions.create({
       model: config.openai.model,
       messages: this.context,
     });
 
-    // Add assistant's response to context
     const assistantMessage = response.choices[0].message as Message;
     this.context.push(assistantMessage);
 
-    // Check and trim context if needed
-    const tokenCount = this.getTokenCount();
-    this.trimContext(tokenCount);
+    // Simple token counting - just the message contents
+    const tokenCount = encoder.encode(
+      userMessage + assistantMessage.content
+    ).length;
+
+    // Trim old messages if context gets too long
+    if (this.context.length > 10) {
+      this.context.splice(1, 2);
+    }
 
     return { message: assistantMessage, tokenCount };
-  }
-
-  /**
-   * Calculate total tokens in current context
-   */
-  private getTokenCount(): number {
-    return encoder.encode(this.context.map((m) => m.content).join('\n')).length;
-  }
-
-  /**
-   * Trim context by removing oldest message pairs
-   * Keeps system message and at least one exchange
-   */
-  private trimContext(tokenCount: number): void {
-    while (tokenCount > config.openai.maxTokens && this.context.length > 3) {
-      this.context.splice(1, 2); // Remove oldest user-assistant pair
-    }
   }
 }
 
