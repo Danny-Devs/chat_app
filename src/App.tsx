@@ -71,10 +71,9 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="h-full w-full flex justify-center">
-        <div className="h-full w-full max-w-[1400px] flex flex-col bg-white dark:bg-gray-900">
-          {/* Full-width header */}
-          <header className="flex-none p-4 border-b dark:border-gray-700 flex justify-between items-center">
+      <div className="h-full mx-auto max-w-7xl">
+        <div className="h-full flex flex-col">
+          <header className="flex-none p-4 border-b dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-900">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Chat App
             </h1>
@@ -87,10 +86,8 @@ const App: React.FC = () => {
             </button>
           </header>
 
-          {/* Main content area */}
-          <div className="flex-1 flex min-h-0">
-            {/* Chat Section */}
-            <div className="flex-1 flex flex-col max-w-4xl">
+          <div className="flex-1 flex min-h-0 bg-white dark:bg-gray-900">
+            <div className="flex-1 flex flex-col">
               <div className="flex-1 min-h-0">
                 <MessageList messages={messages} isLoading={isLoading} />
               </div>
@@ -102,7 +99,6 @@ const App: React.FC = () => {
               <MessageInput onSubmit={handleSubmit} isLoading={isLoading} />
             </div>
 
-            {/* Debug Panel */}
             <div className="w-96 border-l dark:border-gray-700">
               <DebugPanel context={context} />
             </div>
