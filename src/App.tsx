@@ -13,17 +13,17 @@ import { InfoIcon } from './components/icons/InfoIcon';
 const App: React.FC = () => {
   // App state
   const [messages, setMessages] = useState<Message[]>([]);
+  const [context, setContext] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tokenCount, setTokenCount] = useState(0);
   const [maxTokens, setMaxTokens] = useState(100);
-  const [context, setContext] = useState<Message[]>([]);
   const { isDark, setIsDark } = useDarkMode();
 
   // Reset chat context when app mounts
   useEffect(() => {
     resetChat();
-    setContext([]);
     setMessages([]);
+    setContext([]);
     setTokenCount(0);
   }, []);
 
@@ -58,10 +58,10 @@ const App: React.FC = () => {
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await sendMessage(message);
+      const response = await sendMessage(message, context);
       setMessages((prev) => [...prev, response.message]);
-      setTokenCount(response.tokenCount);
       setContext(response.context);
+      setTokenCount(response.tokenCount);
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {

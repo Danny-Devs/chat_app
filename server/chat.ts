@@ -20,22 +20,14 @@ export interface Message {
  * Manages conversation context and token limits
  */
 class ChatManager {
-  // Initialize context with system message
-  private context: Message[] = [
-    {
-      role: 'system',
-      content: 'You are a helpful chatbot.',
-    },
-  ];
+  private systemMessage: Message = {
+    role: 'system',
+    content: 'You are a helpful AI assistant.',
+  };
 
-  // Reset context to initial state
   reset() {
-    this.context = [
-      {
-        role: 'system',
-        content: 'You are a helpful chatbot.',
-      },
-    ];
+    // Just reset max tokens, context is managed by client
+    MAX_TOKENS = 100;
   }
 
   setMaxTokens(newMax: number) {
@@ -46,44 +38,71 @@ class ChatManager {
     return MAX_TOKENS;
   }
 
+  private countTokens(messages: Message[]): number {
+    const encoder = encoding_for_model('gpt-4o');
+    let totalTokens = 0;
+
+    for (const msg of messages) {
+      // Count tokens for role
+      totalTokens += encoder.encode(msg.role).length;
+      // Count tokens for content
+      totalTokens += encoder.encode(msg.content).length;
+      // Add 4 tokens for message overhead (2 for role, 2 for content formatting)
+      totalTokens += 4;
+    }
+    // Add 2 tokens for conversation overhead
+    totalTokens += 2;
+
+    return totalTokens;
+  }
+
   /**
    * Process a user message and return assistant's response
    * Handles context management and token counting
    */
-  async processMessage(userMessage: string): Promise<{
+  async processMessage(
+    userMessage: string,
+    clientContext: Message[] = []
+  ): Promise<{
     message: Message;
     tokenCount: number;
     context: Message[];
   }> {
-    // Add user message to context
-    this.context.push({ role: 'user', content: userMessage });
+    // Add new message to client context
+    const newMessage: Message = { role: 'user', content: userMessage };
+    let context: Message[] = [...clientContext, newMessage];
+
+    // Count tokens and trim if needed BEFORE sending to OpenAI
+    let tokenCount = this.countTokens([this.systemMessage, ...context]);
+
+    // If over token limit, remove oldest user-assistant pairs until under limit
+    while (tokenCount > MAX_TOKENS && context.length >= 2) {
+      // Remove oldest user-assistant pair
+      context.splice(0, 2);
+      tokenCount = this.countTokens([this.systemMessage, ...context]);
+    }
+
+    // Add system message before sending to OpenAI
+    const fullContext = [this.systemMessage, ...context];
 
     // Get OpenAI response
     const response = await openai.chat.completions.create({
       model: config.openai.model,
-      messages: this.context,
+      messages: fullContext,
     });
 
-    const assistantMessage = response.choices[0].message as Message;
-    this.context.push(assistantMessage);
+    const assistantMessage: Message = {
+      role: 'assistant',
+      content: response.choices[0].message.content || '',
+    };
 
-    // Count tokens in entire context
-    let tokenCount = encoding_for_model('gpt-4o').encode(
-      this.context.map((m) => m.content).join('\n')
-    ).length;
-
-    // Remove oldest message pairs if context is too large
-    while (tokenCount > MAX_TOKENS) {
-      this.context.splice(1, 2); // Keep system message, remove user+assistant pair
-      tokenCount = encoding_for_model('gpt-4o').encode(
-        this.context.map((m) => m.content).join('\n')
-      ).length;
-    }
+    // Add assistant's response to context
+    context = [...context, assistantMessage];
 
     return {
       message: assistantMessage,
       tokenCount,
-      context: [...this.context],
+      context: [this.systemMessage, ...context],
     };
   }
 }

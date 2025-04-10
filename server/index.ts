@@ -30,15 +30,15 @@ app.post('/api/chat/max-tokens', (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, context } = req.body;
 
     // Validate input
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Invalid message format' });
     }
 
-    // Process message and return response
-    const result = await chatManager.processMessage(message);
+    // Process message with context and return response
+    const result = await chatManager.processMessage(message, context || []);
     res.json(result);
   } catch (error) {
     console.error('Chat error:', error);

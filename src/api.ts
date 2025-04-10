@@ -1,4 +1,4 @@
-import { ChatResponse } from './types';
+import { ChatResponse, Message } from './types';
 
 const TIMEOUT_MS = 30000; // 30 seconds
 
@@ -15,7 +15,10 @@ export async function resetChat(): Promise<void> {
   });
 }
 
-export async function sendMessage(message: string): Promise<ChatResponse> {
+export async function sendMessage(
+  message: string,
+  context: Message[]
+): Promise<ChatResponse> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
@@ -23,7 +26,7 @@ export async function sendMessage(message: string): Promise<ChatResponse> {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, context }),
       signal: controller.signal,
     });
 
