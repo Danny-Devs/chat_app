@@ -47,10 +47,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-white dark:bg-gray-900">
-      <div className="h-full w-full mx-auto flex">
-        {/* Chat Section */}
-        <div className="flex-1 flex flex-col max-w-4xl">
+    <div className="h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="h-full w-full flex justify-center">
+        <div className="h-full w-full max-w-[1400px] flex flex-col bg-white dark:bg-gray-900">
+          {/* Full-width header */}
           <header className="flex-none p-4 border-b dark:border-gray-700 flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Chat App
@@ -63,27 +63,34 @@ const App: React.FC = () => {
               {isDark ? <MoonIcon /> : <SunIcon />}
             </button>
           </header>
-          <div className="flex-1 min-h-0">
-            <MessageList messages={messages} isLoading={isLoading} />
-          </div>
-          <div className="flex-none text-sm text-gray-500 dark:text-gray-400 px-4 py-2 border-t dark:border-gray-700 flex items-center">
-            <div className="group relative flex items-center">
-              <span className="mr-1">
-                <InfoIcon />
-              </span>
-              <span className="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-60 bg-gray-800 text-white text-xs rounded p-2">
-                Token count estimated using 'tiktoken' - may differ from
-                official OpenAI API count
-              </span>
-            </div>
-            Token count: {tokenCount}
-          </div>
-          <MessageInput onSubmit={handleSubmit} isLoading={isLoading} />
-        </div>
 
-        {/* Debug Panel */}
-        <div className="w-96 border-l dark:border-gray-700">
-          <DebugPanel context={context} />
+          {/* Main content area */}
+          <div className="flex-1 flex min-h-0">
+            {/* Chat Section */}
+            <div className="flex-1 flex flex-col max-w-4xl">
+              <div className="flex-1 min-h-0">
+                <MessageList messages={messages} isLoading={isLoading} />
+              </div>
+              <div className="flex-none text-sm text-gray-500 dark:text-gray-400 px-4 py-2 border-t dark:border-gray-700 flex items-center">
+                <div className="group relative flex items-center">
+                  <span className="mr-1">
+                    <InfoIcon />
+                  </span>
+                  <span className="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-60 bg-gray-800 text-white text-xs rounded p-2">
+                    Token count estimated using 'tiktoken' - may differ from
+                    official OpenAI API count
+                  </span>
+                </div>
+                Token count: {tokenCount}
+              </div>
+              <MessageInput onSubmit={handleSubmit} isLoading={isLoading} />
+            </div>
+
+            {/* Debug Panel */}
+            <div className="w-96 border-l dark:border-gray-700">
+              <DebugPanel context={context} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
