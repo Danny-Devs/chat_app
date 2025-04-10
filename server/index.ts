@@ -11,6 +11,12 @@ app.use(cors()); // Enable CORS for frontend
 app.use(express.json({ limit: '10kb' })); // Parse JSON bodies with size limit
 app.use(config.rateLimit); // Apply rate limiting
 
+// Reset endpoint
+app.post('/api/chat/reset', (req, res) => {
+  chatManager.reset();
+  res.json({ success: true });
+});
+
 // API Routes
 app.post('/api/chat', async (req, res) => {
   try {
@@ -23,6 +29,9 @@ app.post('/api/chat', async (req, res) => {
 
     // Process message and return response
     const result = await chatManager.processMessage(message);
+    console.log('Server sending result:', result); // Debug log
+    console.log('Context array exists:', Array.isArray(result.context)); // Debug log
+    console.log('Context length:', result.context?.length); // Debug log
     res.json(result);
   } catch (error) {
     console.error('Chat error:', error);

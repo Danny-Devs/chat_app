@@ -9,6 +9,12 @@ export class ChatError extends Error {
   }
 }
 
+export async function resetChat(): Promise<void> {
+  await fetch(`${import.meta.env.VITE_API_URL}/api/chat/reset`, {
+    method: 'POST',
+  });
+}
+
 export async function sendMessage(message: string): Promise<ChatResponse> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);

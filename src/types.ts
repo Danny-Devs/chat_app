@@ -6,4 +6,5 @@ export interface Message {
 export interface ChatResponse {
   message: Message;
   tokenCount: number;
+  context: Message[];
 }

@@ -4,7 +4,7 @@ import { config } from './config';
 
 // Initialize OpenAI client
 const openai = new OpenAI();
-const MAX_TOKENS = 100;
+const MAX_TOKENS = 1000;
 
 /**
  * Message interface representing a chat message
@@ -28,13 +28,23 @@ class ChatManager {
     },
   ];
 
+  // Reset context to initial state
+  reset() {
+    this.context = [
+      {
+        role: 'system',
+        content: 'You are a helpful chatbot.',
+      },
+    ];
+  }
+
   /**
    * Process a user message and return assistant's response
    * Handles context management and token counting
    */
   async processMessage(
     userMessage: string
-  ): Promise<{ message: Message; tokenCount: number }> {
+  ): Promise<{ message: Message; tokenCount: number; context: Message[] }> {
     // Add user message to context
     this.context.push({ role: 'user', content: userMessage });
 
@@ -60,8 +70,11 @@ class ChatManager {
       ).length;
     }
 
-    // Return assistant's message and TOTAL context tokens
-    return { message: assistantMessage, tokenCount };
+    return {
+      message: assistantMessage,
+      tokenCount,
+      context: [...this.context],
+    };
   }
 }
 
