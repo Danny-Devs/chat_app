@@ -7,6 +7,7 @@ import type { Message } from './types';
 import { useDarkMode } from './hooks/useDarkMode';
 import { SunIcon } from './components/icons/SunIcon';
 import { MoonIcon } from './components/icons/MoonIcon';
+import { InfoIcon } from './components/icons/InfoIcon';
 
 const App: React.FC = () => {
   // App state
@@ -65,7 +66,16 @@ const App: React.FC = () => {
           <div className="flex-1 min-h-0">
             <MessageList messages={messages} isLoading={isLoading} />
           </div>
-          <div className="flex-none text-sm text-gray-500 dark:text-gray-400 px-4 py-2 border-t dark:border-gray-700">
+          <div className="flex-none text-sm text-gray-500 dark:text-gray-400 px-4 py-2 border-t dark:border-gray-700 flex items-center">
+            <div className="group relative flex items-center">
+              <span className="mr-1">
+                <InfoIcon />
+              </span>
+              <span className="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-60 bg-gray-800 text-white text-xs rounded p-2">
+                Token count estimated using 'tiktoken' - may differ from
+                official OpenAI API count
+              </span>
+            </div>
             Token count: {tokenCount}
           </div>
           <MessageInput onSubmit={handleSubmit} isLoading={isLoading} />
